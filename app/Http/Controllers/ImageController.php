@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImageRequest;
 use App\Http\Resources\ImageResource;
 use App\Models\Category;
 use App\Models\Image;
@@ -24,15 +25,7 @@ class ImageController extends Controller
         return ImageResource::collection($post->images);
     }
 
-    public function show(Post $post): Response
-    {
-        return Inertia::render('OnePostShow', [
-            'post' => $post->load('user', 'category', 'tags'),
-            'tags' => Tag::all(),
-        ]);
-    }
-
-    public function store(Post $post, Request $request)
+    public function store(Post $post, ImageRequest $request)
     {
         $images = $request->file('images');
 
@@ -53,14 +46,12 @@ class ImageController extends Controller
         } else {
             return response()->json(['message' => trans('notifications.Error while adding post')], 500);
         }
-
-        return response()->json(['message' => trans('notifications.Error while adding post')], 400);
     }
 
     public function destroy(Image $image)
     {
         $image->delete();
 
-        return response()->json(['message' => trans('notifications.Image deleted')], 201);
+        return response()->json(['message' => trans('notifications.Image deleted')], 200);
     }
 }

@@ -5,13 +5,8 @@ import React, {
     useRef,
     useEffect,
 } from "react";
-import { Link, Head } from "@inertiajs/react";
-import { ToastContainer, toast } from "react-toastify";
-import AxiosGet from "../API/AxiosGet";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Post from "./Post";
-import NavBar from "../NavBar";
-import Filters from "./Filters";
 import AxiosDelete from "../API/AxiosDelete";
 
 export default function InfiniteScrollPosts({

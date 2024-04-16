@@ -32,8 +32,7 @@ export default function SynchModal({}) {
         <div>
             <Button
                 text={"Synchronizuj dane z facebook"}
-                //onClick={closeDialog}
-                onClick={() => openDialog()}
+                onClick={openDialog}
                 className="bg-blue-500 hover:bg-blue-400 text-white rounded-lg"
                 iconPath={"sync.png"}
             />
@@ -48,7 +47,6 @@ export default function SynchModal({}) {
                     >
                         {"Synchronizacja postów z facebook"}
                     </Dialog.Title>
-                    {/* <Dialog.Description>{"synch"}</Dialog.Description> */}
                     <div className="mt-4 flex justify-end">
                         {isSync
                             ? "Rozpoczęto synchronizacje danych, może to potrwać kilka minut..., zrób sobie kawe"

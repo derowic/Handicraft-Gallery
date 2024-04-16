@@ -1,3 +1,10 @@
-1. przycisk do dodawania nowego postu ++
-2. przycisk do synchronizacji postów ++
-3. Napisy w formularzu, że poprzedni post nie został zapisany i trzeba zapisać aby zrobić nowy
++ 1. przycisk do dodawania nowego postu
++ 2. przycisk do synchronizacji postów
++ 3. Napisy w formularzu, że poprzedni post nie został zapisany i trzeba zapisać aby zrobić nowy
++ 4. resource i Request
++ 5. ładowanie zdjęć postów po kliknięci posta
+6. cache do ostatnich 50 zdjęć
++ 7. ustandaryzwoanie kodu, szczegolnie auth i guest layout
+- 8. zdjęcia do wersji webp, do zrobienia ale na linux
+9. pozycjonowanie strony
+10. walidacja formularza

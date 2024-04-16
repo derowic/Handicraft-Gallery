@@ -4,7 +4,7 @@ import { useDropzone } from "react-dropzone";
 import Button from "@/Pages/BasicElements/Button";
 import Img from "../Img";
 import { Drawer } from "@mui/material";
-import BackgroundImage from "@/Pages/BackgroundImage";
+import BackgroundImage from "@/Layouts/BackgroundImage";
 import Notify from "@/Pages/API/Notify";
 
 export default function ImgDropFiled({
@@ -61,11 +61,14 @@ export default function ImgDropFiled({
     };
 
     const handleImageUpload = async () => {
+
+        console.error("Error uploading images:");
         const formData = new FormData();
         images.forEach((image) => {
             formData.append("images[]", image); // Dodaj każde zdjęcie do obiektu FormData
         });
 
+        console.log(post);
         try {
             const response = await axios.post(
                 route("image.store", { post: post.id }), // Zmień na odpowiedni endpoint
@@ -84,7 +87,7 @@ export default function ImgDropFiled({
             refreshImages();
         } catch (error) {
             console.error("Error uploading images:", error);
-            Notify(error.response.data.message, "error");
+            Notify(error.response?.data?.message, "error");
         }
     };
 
@@ -166,7 +169,7 @@ export default function ImgDropFiled({
                             </div>
                         </div>
                     </div>
-                    <div className="relative bg-white w-full flex justify-end z-10">
+                    <div className="relative w-full flex justify-end z-10">
                         <Button
                             onClick={handleImageUpload}
                             className="text-white bg-green-500 hover:bg-green-400 rounded-lg mx-5"

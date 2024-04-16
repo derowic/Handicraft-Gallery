@@ -5,58 +5,46 @@ import React, {
     useRef,
     useEffect,
 } from "react";
-import { Link, Head } from "@inertiajs/react";
-import { ToastContainer, toast } from "react-toastify";
+import { Link } from "@inertiajs/react";
 import AxiosGet from "./API/AxiosGet";
-import InfiniteScroll from "react-infinite-scroll-component";
 import InfiniteScrollPosts from "./Post/InfiniteScrollPosts";
 import Categories from "./Category/Categories";
-import NavBar from "./NavBar";
-import Filters from "./Post/Filters";
+import AuthenticatedLayout from "../Layouts/AuthenticatedLayout";
 import { Drawer, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import BackgroundImage from "./BackgroundImage";
+import BackgroundImage from "../Layouts/BackgroundImage";
+import Button from "./BasicElements/Button";
+import { Inertia } from "@inertiajs/inertia";
+import SynchModal from "./Post/SynchModal";
+import { usePage } from "@inertiajs/react";
+import FetchWithPagination from "./API/FetchWithPagination";
 
-export default function Dashboard({ auth }) {
+export default function Dashboard({ }) {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState([]);
     const [page, setPage] = useState(1);
     const [posts, setPosts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
-    const [minPrice, setMinPrice] = useState("");
-    const [maxPrice, setMaxPrice] = useState("");
-    const [width, setWidth] = useState("");
-    const [length, setLength] = useState("");
-    const [height, setHeight] = useState("");
-    const [diameter, setDiameter] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const [screenWidth, setScreenWidth] = useState(
         window.navigator.userAgentData?.mobile,
     );
-    //console.log(selectedCategory, categories);
+    const user = usePage().props.auth.user;
 
     const fetchPaginatedImage = async () => {
         if (setPosts) {
-            let response = await AxiosGet(
-                "posts.fetchPosts",
+            FetchWithPagination(
+                "post.fetchPosts",
                 {
                     page: page,
                     category: selectedCategory ? selectedCategory : null,
-                    minPrice: minPrice,
-                    maxPrice: maxPrice,
-                    width: width,
-                    length: length,
-                    height: height,
-                    diameter: diameter,
                 },
-                null,
-                null,
+                setPosts,
+                page,
+                setPage,
+                setHasMore
             );
-
-            setHasMore(response.hasMore);
-            setPosts((prevData) => [...prevData, ...response.posts]);
-            setPage(page + 1);
         }
     };
 
@@ -76,18 +64,15 @@ export default function Dashboard({ auth }) {
     useEffect(() => {
         resetScroll();
         setPosts([]);
-        //setPage(1);
         fetchPaginatedImage();
-        // toggleDrawer();
-    }, [selectedCategory, minPrice, maxPrice, width, length, height, diameter]);
+    }, [selectedCategory]);
 
     return (
-        <>
+        <AuthenticatedLayout>
             {screenWidth ? (
                 <>
                     <BackgroundImage />
                     <div className="w-full bg-[#fff] text-[#333]">
-                        {/* <NavBar auth={auth}/> */}
                         <div className="flex">
                             <Link
                                 href={route("welcome")}
@@ -119,23 +104,6 @@ export default function Dashboard({ auth }) {
                                             setSelectedCategory
                                         }
                                     />
-                                    {/* <div className="m-auto text-center ">
-                                        <Filters
-                                            category={null}
-                                            minPrice={minPrice}
-                                            setMinPrice={setMinPrice}
-                                            maxPrice={maxPrice}
-                                            setMaxPrice={setMaxPrice}
-                                            width={width}
-                                            setWidth={setWidth}
-                                            length={length}
-                                            setLength={setLength}
-                                            height={height}
-                                            setHeight={setHeight}
-                                            diameter={diameter}
-                                            setDiameter={setDiameter}
-                                        />
-                                    </div> */}
                                     <div className="h-[40vh]"></div>
                                     <div className=" text-center text-sl m-auto h-1/6">
                                         <p className="w-full text-2xl tracking-widest py-2 text-center">
@@ -150,7 +118,8 @@ export default function Dashboard({ auth }) {
                         <div className="w-full">
                             <InfiniteScrollPosts
                                 posts={posts}
-                                fetchPaginatedImage={fetchPaginatedImage}
+                                setPosts={setPosts}
+                                fetchPaginatedImage={null}
                                 hasMore={hasMore}
                             />
                         </div>
@@ -158,54 +127,55 @@ export default function Dashboard({ auth }) {
                 </>
             ) : (
                 <>
-                    <div className="bg-[#fff] text-[#333]">
-                        <NavBar auth={auth} />
-                        <div className="flex">
-                            <div className="lg:sticky top-12 w-1/6 h-screen flex flex-col justify-between">
-                                <Categories
-                                    setPage={setPage}
-                                    categories={categories}
-                                    selectedCategory={selectedCategory}
-                                    setSelectedCategory={setSelectedCategory}
-                                />
+                    <div className="flex">
+                        <div className="lg:sticky top-12 w-1/6 h-screen flex flex-col justify-between">
+                            <Categories
+                                setPage={setPage}
+                                categories={categories}
+                                selectedCategory={selectedCategory}
+                                setSelectedCategory={setSelectedCategory}
+                                toggleDrawer={toggleDrawer}
+                            />
 
-                                <div className="w-full bg-green-300">
-                                    {/* <Filters
-                                        category={null}
-                                        minPrice={minPrice}
-                                        setMinPrice={setMinPrice}
-                                        maxPrice={maxPrice}
-                                        setMaxPrice={setMaxPrice}
-                                        width={width}
-                                        setWidth={setWidth}
-                                        length={length}
-                                        setLength={setLength}
-                                        height={height}
-                                        setHeight={setHeight}
-                                        diameter={diameter}
-                                        setDiameter={setDiameter}
-                                    /> */}
-                                </div>
-                                <div className="h-3/6"></div>
+                            <div className="w-full bg-green-300">
+                            </div>
+                            <div className="h-3/6"></div>
 
-                                <div className=" text-center text-sl m-auto ">
-                                    <p className="text-ml">Kontakt</p>
-                                    <p>tel.669 365 417</p>
-                                    <p>Ruda 77a, Sieradz 98-200</p>
-                                </div>
-                                <div></div>
+                            <div className=" text-center text-sl m-auto ">
+                                <p className="text-ml">Kontakt</p>
+                                <p>tel.669 365 417</p>
+                                <p>Ruda 77a, Sieradz 98-200</p>
                             </div>
-                            <div className="w-5/6 ">
-                                <InfiniteScrollPosts
-                                    posts={posts}
-                                    fetchPaginatedImage={fetchPaginatedImage}
-                                    hasMore={hasMore}
-                                />
+                            <div></div>
+                        </div>
+                        <div className="w-5/6 relative">
+                            <div className="flex w-full justify-center text-center">
+                                {user && (
+                                    <>
+                                        <Button
+                                            text={"Dodaj nowy post"}
+                                            onClick={() =>
+                                                Inertia.visit(
+                                                    route("post.create"),
+                                                )
+                                            }
+                                            className="bg-yellow-500 hover:bg-yellow-400 text-white rounded-lg"
+                                            iconPath={"add.png"}
+                                        />
+                                        <SynchModal />
+                                    </>
+                                )}
                             </div>
+                            <InfiniteScrollPosts
+                                posts={posts}
+                                setPosts={setPosts}
+                                fetchPaginatedImage={fetchPaginatedImage}
+                                hasMore={hasMore}
+                            />
                         </div>
                     </div>
                 </>
             )}
-        </>
+        </AuthenticatedLayout>
     );
 }

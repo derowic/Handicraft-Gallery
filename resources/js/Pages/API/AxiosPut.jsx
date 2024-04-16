@@ -1,19 +1,31 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Notify from "@/Pages/API/Notify";
 
-export default async function AxiosPut (rout, routData, data, returnType = null) {
+async function AxiosPut (rout, routeData, data, setErrors) {
     try {
-        const response = await axios.put(route(rout, routData), data);
-        Notify(response.data.message, null, response.status);
+        const response = await axios.put(route(rout, routeData), data)
+            .then(
+                function (response) {
+                Notify(response.data.message, null, response.status);
+                return response.data;
+            }
+            )
+            .catch(function (error) {
+                Notify(error.response.data.message, "error");
+                console.log(error);
+            })
 
-        if (returnType == null) {
-            return response.data.data;
-        } else if (returnType == 1) {
-            return response;
-        }
+            .finally(function () {
+                // always executed
+            });
+        Notify(response.data.message, null, response.status);
+        return response.data;
     } catch (error) {
-        Notify(error.response.data.message, "error");
-        console.error("Axios put error: ", error);
+        Notify(error.response?.data?.message, "error");
+        //console.error(error);
+        //throw error;
+        return "t";
     }
-};
+}
+
+export default AxiosPut;

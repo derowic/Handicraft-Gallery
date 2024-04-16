@@ -1,37 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { Dialog } from "@headlessui/react";
-import ImgList from "../ImgList";
-import { Button, Drawer, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import Img from "../Img";
-import BackgroundImage from "../../BackgroundImage";
+import BackgroundImage from "../../../Layouts/BackgroundImage";
 import { usePage } from "@inertiajs/react";
 import CustomButton from "../../BasicElements/Button";
-import Modal from "../../BasicElements/Modal";
-import NavBar from "../../NavBar";
 import AxiosPut from "@/Pages/API/AxiosPut";
 import ImgDropFiled from "./ImgDropFiled";
 import AxiosDelete from "@/Pages/API/AxiosDelete";
 import { Inertia } from "@inertiajs/inertia";
 import AxiosPost from "@/Pages/API/AxiosPost";
 import AxiosGet from "@/Pages/API/AxiosGet";
+import Authenticated from "@/Layouts/AuthenticatedLayout";
+// import { useForm } from '@inertiajs/inertia-react';
+import { useForm } from "@inertiajs/react";
 
-export default function FormPost({ categories, post }) {
-    //console.log(categories, post);
+export default function FormPost({ title, categories, postData }) {
+    console.log(postData);
     const user = usePage().props.auth.user;
-    const [isOpen, setIsOpen] = useState(false);
-    const [images, setImages] = useState(post ? post.images : null);
-    const [isHovered, setIsHovered] = useState(false);
-    const [selectedOption, setSelectedOption] = useState(
-        post ? post.category_id : null,
-    );
+    const [images, setImages] = useState(postData ? postData.images : null);
+    const [selectedOption, setSelectedOption] = useState(postData ? postData.category_id : null);
     const [preViewImages, setPreViewImages] = useState([]);
-
-    const [postData, setPostData] = useState({
-        title: post ? post.title : "",
-        description: post ? post.description : "",
-        price: post ? post.price : 0,
-        category: post ? post.category_id : 0,
+    const { data, setData, post, put, processing, errors, setError } = useForm({
+        forceFormData: true,
+        title: postData ? postData.title : "",
+        description: postData ? postData.description : "",
+        price: postData ? postData.price : 0,
+        category: postData ? postData.category_id : 0,
     });
 
     const closeDialog = () => {
@@ -39,8 +32,11 @@ export default function FormPost({ categories, post }) {
     };
 
     const handleChange = (e) => {
+        console.log(e.target.name);
+        console.log(e.target.value);
+        //setSelectedOption(event.target.value);
         const { name, value } = e.target;
-        setPostData((prevState) => ({
+        setData((prevState) => ({
             ...prevState,
             [name]: value,
         }));
@@ -48,32 +44,93 @@ export default function FormPost({ categories, post }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (post) {
-            AxiosPut(
-                "post.update",
-                { post: post.id },
+
+        // const response = await (postData
+        //     ? Inertia.put(route("post.update", { post: postData.id }), data)
+        //     : Inertia.post(route("post.store"), data));
+        //console.log(postData);
+        if (postData) {
+            put(route("post.update", { post: postData.id }),
+                // {
+                //     ...data,
+                //     _method: "put",
+                //     preserveScroll: true,
+                // },
                 {
-                    title: postData.title,
-                    description: postData.description,
-                    price: postData.price,
-                    category: selectedOption,
+                    onSuccess: (response) => {
+                        console.log(response);
+                        //closeDialog();
+                    },
+                    onError: (errors) => {
+                        console.log(errors);
+                        setError(errors);
+                    },
+                    onFinish: (params) => {
+                        console.log(params);
+                    },
                 },
             );
         } else {
-            AxiosPost("post.store", null, {
-                title: postData.title,
-                description: postData.description,
-                price: postData.price,
-                category: selectedOption,
-            });
+            post(route("post.store"),
+                // {
+                //     ...data,
+                //     _method: "post",
+                //     preserveScroll: true,
+                // },
+                {
+                    onSuccess: (response) => {
+                        console.log(response);
+                        //closeDialog();
+                    },
+                    onError: (errors) => {
+                        console.log(errors);
+                        setError(errors);
+                        //toast.error(translation.t("Error"));
+                    },
+                    onFinish: (params) => {
+                        console.log(params);
+                    }
+                }
+            );
         }
-
-        //await Inertia.post('/post/update', postData);
-        Inertia.visit(route("dashboard"));
     };
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     let tmp= "l";
+    //     //     // const response = await AxiosPost('/your/route', { /* your route data */ }, { /* your data */ });
+    //     //     // console.log("Response data: ", response.data);
+    //     //
+    //     // try {
+    //         if (post) {
+    //             const response = await AxiosPut(
+    //                 "post.update",
+    //                 { post: post.id },
+    //                 {
+    //                     title: postData.title,
+    //                     description: postData.description,
+    //                     price: postData.price,
+    //                     category: selectedOption,
+    //                 },
+    //             );
+    //             console.log(response);
+    //         } else {
+    //             tmp = AxiosPost("post.store", null, {
+    //                 title: postData.title,
+    //                 description: postData.description,
+    //                 price: postData.price,
+    //                 category: selectedOption,
+    //             });
+    //             console.log(tmp);
+    //         }
+    //     //   } catch (error) {
+    //     //     console.error("Błąd podczas wysyłania żądania:", error);
+    //     //   }
+    //     //await Inertia.post('/post/update', postData);
+    //     //Inertia.visit(route("dashboard"));
+    // };
 
     const refreshImages = async () => {
-        AxiosGet("image.fetchImages", { post: post.id }, null, setImages);
+        AxiosGet("image.fetchImages", { post: postData.id }, null, setImages);
     };
 
     const moveUp = (id) => {
@@ -139,7 +196,7 @@ export default function FormPost({ categories, post }) {
     };
 
     const reset = () => {
-        setPostData({
+        setData({
             title: post.title ?? "",
             description: post.description ?? "",
             price: post.price ?? 0,
@@ -154,11 +211,11 @@ export default function FormPost({ categories, post }) {
     }, [postData, preViewImages]);
 
     return (
-        <>
-            <NavBar />
+        <Authenticated>
             <BackgroundImage />
-            <div className="flex relative w-fulls">
-                <form onSubmit={handleSubmit} className="w-2/6 mx-auto">
+            <div className="w-full text-center p-2 bg-white text-red-600 text-3xl font-bold">{title}</div>
+            <div className="flex relative w-full p-2">
+                <form onSubmit={handleSubmit} className="w-2/6 mx-auto bg-white rounded-lg h-1/2 ">
                     <div className="flex flex-col items-center">
                         <div className="w-5/6">
                             <label
@@ -171,10 +228,11 @@ export default function FormPost({ categories, post }) {
                                 type="text"
                                 id="title"
                                 name="title"
-                                value={postData.title}
+                                value={data.title}
                                 onChange={handleChange}
                                 className="w-full rounded-lg p-2"
                             />
+                            {errors.title && <span className="text-red-500">{errors.title}</span>}
                         </div>
                         <div className="w-5/6">
                             <label
@@ -186,10 +244,11 @@ export default function FormPost({ categories, post }) {
                             <textarea
                                 id="description"
                                 name="description"
-                                value={postData.description}
+                                value={data.description}
                                 onChange={handleChange}
                                 className="w-full rounded-lg p-2"
                             ></textarea>
+                            {errors.description && <span className="text-red-500">{errors.description}</span>}
                         </div>
                         <div className="w-5/6">
                             <label
@@ -202,10 +261,11 @@ export default function FormPost({ categories, post }) {
                                 type="number"
                                 id="price"
                                 name="price"
-                                value={postData.price}
+                                value={data.price}
                                 onChange={handleChange}
                                 className="w-full rounded-lg p-2"
                             />
+                            {errors.price && <span className="text-red-500">{errors.price}</span>}
                         </div>
                         <div className="w-5/6 text-black m-2">
                             <label
@@ -215,8 +275,11 @@ export default function FormPost({ categories, post }) {
                                 Kategoria
                             </label>
                             <select
+                                type="number"
+                                id="price"
+                                name="category"
                                 value={selectedOption}
-                                onChange={handleSelectChange}
+                                onChange={(e) => handleChange(e)}
                                 className="rounded-lg w-full"
                             >
                                 <option value={0}>Wybierz opcję...</option>
@@ -230,25 +293,21 @@ export default function FormPost({ categories, post }) {
                                     </option>
                                 ))}
                             </select>
+                            {errors.category && <span className="text-red-500">{errors.category}</span>}
                         </div>
                     </div>
                 </form>
                 <div className="w-4/6">
                     <div className="w-full flex justify-center items-center">
-                        {/* <CustomButton
-                            text={"Dodaj zdjęcie"}
-                            onClick={closeDialog}
-                            className="bg-yellow-500 hover:bg-yellow-400 text-white rounded-lg"
-                            iconPath={"add.png"}
-                        /> */}
                         <ImgDropFiled
-                            post={post}
+                            post={postData}
                             preViewImages={preViewImages}
                             setPreViewImages={setPreViewImages}
                             refreshImages={refreshImages}
                         />
                     </div>
                     <div className="overflow-y-auto h-[85vh] relative">
+                        <div className="text-2xl text-center">{images && images.length == 0 && "Nie załadowano jeszcze żadnych zdjęć"}</div>
                         {images &&
                             images.map((image, imageIndex) => (
                                 <div className="relative">
@@ -261,7 +320,6 @@ export default function FormPost({ categories, post }) {
                                     <div className="absolute top-0 right-0 m-2">
                                         <CustomButton
                                             text={"Usuń zdjęcie"}
-                                            //onClick={closeDialog}
                                             onClick={() =>
                                                 deleteImage(image.id)
                                             }
@@ -311,7 +369,7 @@ export default function FormPost({ categories, post }) {
                     </div>
                 </div>
             </div>
-            <div className="absolute bottom-0 right-0  bg-white w-full flex justify-end">
+            <div className="absolute bottom-0 right-0 w-full flex justify-end">
                 <CustomButton
                     text={"Zapisz"}
                     onClick={handleSubmit}
@@ -331,6 +389,6 @@ export default function FormPost({ categories, post }) {
                     iconPath={"delete.png"}
                 />
             </div>
-        </>
+        </Authenticated>
     );
 }

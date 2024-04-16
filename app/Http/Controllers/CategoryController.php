@@ -15,14 +15,14 @@ class CategoryController extends Controller
         return CategoryResource::collection($categories);
     }
 
-    public function store(CategoryRequest $request)
-    {
-        $category = new Category();
-        $category->name = $request->input('name');
-        $category->save();
+    // public function store(CategoryRequest $request)
+    // {
+    //     $category = new Category();
+    //     $category->name = $request->input('name');
+    //     $category->save();
 
-        return response()->json(['message' => trans('notifications.Success, category added')], 200);
-    }
+    //     return response()->json(['message' => trans('notifications.Success, category added')], 201);
+    // }
 
     public function destroy(Category $category)
     {

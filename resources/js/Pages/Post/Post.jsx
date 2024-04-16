@@ -1,16 +1,15 @@
-import React, { useState } from "react";
-import { Dialog } from "@headlessui/react";
-import ImgList from "./ImgList";
-import { Button, Drawer, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import React, { useState, useEffect } from "react";
+import { Drawer } from "@mui/material";
 import Img from "./Img";
-import BackgroundImage from "../BackgroundImage";
+import BackgroundImage from "../../Layouts/BackgroundImage";
 import { usePage } from "@inertiajs/react";
 import CustomButton from "../BasicElements/Button";
 import Modal from "../BasicElements/Modal";
 import { Inertia } from "@inertiajs/inertia";
+import AxiosGet from "../API/AxiosGet";
 
 export default function Post({ post, deletingPost }) {
+    const [images, setImages] = useState([]);
     const user = usePage().props.auth.user;
     const [isOpen, setIsOpen] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
@@ -35,9 +34,15 @@ export default function Post({ post, deletingPost }) {
         }
     };
 
-    const handleEditClick = () => {
-        console.log("edit");
-    };
+    useEffect(() => {
+        //AxiosGet("image.fetchImages",)
+        if(isOpen == true && images.length == 0)
+        {
+            console.log(post);
+            AxiosGet("image.fetchImages",{post: post.id}, null, setImages);
+        }
+    }, [isOpen]);
+
 
     return (
         <div className="relative">
@@ -48,7 +53,7 @@ export default function Post({ post, deletingPost }) {
             >
                 <Img
                     className={"m-auto"}
-                    image={post.images[0]}
+                    image={post.image}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                 />
@@ -82,11 +87,10 @@ export default function Post({ post, deletingPost }) {
                 <div className="lg:flex">
                     <div className="w-1/6"></div>
                     <div className="sm:w-full lg:w-4/6 overflow-y-auto h-[100vh] relative">
-                        {post.images.map((image, imageIndex) => (
+                        {images.map((image, imageIndex) => (
                             <Img
                                 className="w-full mx-auto"
                                 image={image}
-                                imageIndex={imageIndex}
                                 key={imageIndex}
                             />
                         ))}
@@ -95,7 +99,7 @@ export default function Post({ post, deletingPost }) {
                         <div>{post.title ?? `Produkt ${post.id}`}</div>
                         <div>Opis: {post.description}</div>
                         <div>cena: {post.price ?? "nie podano"} zł</div>
-                        <div>ilość zdjęć: {post.images.length}</div>
+                        <div>ilość zdjęć: {images.length}</div>
                     </div>
                 </div>
             </Drawer>

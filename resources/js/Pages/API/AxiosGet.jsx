@@ -6,7 +6,6 @@ export default async function AxiosGet (rout, routData, data, setData) {
     return await axios
         .get(route(rout, routData), data)
         .then((response) => {
-            //console.log(response);
             if (response.data.hasMore != null) {
                 return response.data;
             } else {

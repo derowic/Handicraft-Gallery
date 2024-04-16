@@ -5,10 +5,6 @@ import React, {
     useRef,
     useEffect,
 } from "react";
-import { Link, Head } from "@inertiajs/react";
-import { ToastContainer, toast } from "react-toastify";
-import AxiosGet from "../API/AxiosGet";
-import InfiniteScroll from "react-infinite-scroll-component";
 import clsx from "clsx";
 
 export default function Img({
@@ -16,7 +12,7 @@ export default function Img({
     image,
     onMouseEnter,
     onMouseLeave,
-    onLoad,
+    onLoad
 }) {
     return (
         <>
@@ -26,6 +22,7 @@ export default function Img({
                 className={clsx("animate-slow", className)}
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
+                onLoad={onLoad}
             />
         </>
     );

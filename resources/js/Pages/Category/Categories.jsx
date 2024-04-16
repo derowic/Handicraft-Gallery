@@ -30,17 +30,6 @@ export default function Categories({
 
     return (
         <div className="w-full">
-            {/* {user &&
-                <div className="text-sm text-center flex justify-between">
-                    <div></div>
-                    <Button
-                        className="bg-green-500 rounded-lg text-white"
-                        text={"Edytuj kategorie"}
-                        iconPath={"edit.png"}
-                    />
-                </div>
-                <CategoryEditModal/>
-            } */}
             <InfiniteScroll
                 dataLength={categories.length}
                 next={null}

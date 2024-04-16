@@ -6,13 +6,11 @@ use App\Repositories\FBRepository;
 
 class FacebookController extends Controller
 {
-    private $categories;
-
     protected $fbRepository;
 
-    public function __construct(FBRepository $fbRepository)
+    public function __construct()
     {
-        $this->fbRepository = $fbRepository;
+        $this->fbRepository =new FBRepository;
     }
 
     public function refresh()
