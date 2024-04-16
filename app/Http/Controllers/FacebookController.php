@@ -10,7 +10,7 @@ class FacebookController extends Controller
 
     public function __construct()
     {
-        $this->fbRepository =new FBRepository;
+        $this->fbRepository = new FBRepository;
     }
 
     public function refresh()

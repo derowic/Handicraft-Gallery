@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Notify from "./Notify";
 
-export default async function AxiosGet (rout, routData, data, setData) {
+export default async function AxiosGet(rout, routData, data, setData) {
     return await axios
         .get(route(rout, routData), data)
         .then((response) => {
@@ -25,4 +25,4 @@ export default async function AxiosGet (rout, routData, data, setData) {
                 console.error("error");
             }
         });
-};
+}

@@ -36,13 +36,11 @@ export default function Post({ post, deletingPost }) {
 
     useEffect(() => {
         //AxiosGet("image.fetchImages",)
-        if(isOpen == true && images.length == 0)
-        {
+        if (isOpen == true && images.length == 0) {
             console.log(post);
-            AxiosGet("image.fetchImages",{post: post.id}, null, setImages);
+            AxiosGet("image.fetchImages", { post: post.id }, null, setImages);
         }
     }, [isOpen]);
-
 
     return (
         <div className="relative">

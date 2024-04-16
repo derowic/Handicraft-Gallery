@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Category;
-use App\Models\Image;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -31,10 +30,10 @@ class PostController extends Controller
             $post->created_at = now();
             $post->updated_at = now();
             $post->save();
-            $title = "";
+            $title = '';
         } else {
             $post->load('images');
-            $title = "Nie zapisano poprzedniego postu, możesz dokończyć jego edycję";
+            $title = 'Nie zapisano poprzedniego postu, możesz dokończyć jego edycję';
         }
 
         return Inertia::render('Post/Form/FormPost', [
@@ -43,7 +42,8 @@ class PostController extends Controller
             'postData' => $post,
         ]);
     }
-     public function edit(Post $post)
+
+    public function edit(Post $post)
     {
         $post->load('images');
 
@@ -66,7 +66,7 @@ class PostController extends Controller
 
         return response()->json([
             'hasMore' => $posts->hasMorePages(),
-            'data' => PostResource::collection($posts)
+            'data' => PostResource::collection($posts),
         ]);
     }
 

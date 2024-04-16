@@ -12,7 +12,7 @@ export default function Img({
     image,
     onMouseEnter,
     onMouseLeave,
-    onLoad
+    onLoad,
 }) {
     return (
         <>

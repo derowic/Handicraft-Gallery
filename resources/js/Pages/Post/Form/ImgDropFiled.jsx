@@ -61,7 +61,6 @@ export default function ImgDropFiled({
     };
 
     const handleImageUpload = async () => {
-
         console.error("Error uploading images:");
         const formData = new FormData();
         images.forEach((image) => {

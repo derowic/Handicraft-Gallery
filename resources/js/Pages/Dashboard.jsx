@@ -20,7 +20,7 @@ import SynchModal from "./Post/SynchModal";
 import { usePage } from "@inertiajs/react";
 import FetchWithPagination from "./API/FetchWithPagination";
 
-export default function Dashboard({ }) {
+export default function Dashboard({}) {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState([]);
     const [page, setPage] = useState(1);
@@ -43,7 +43,7 @@ export default function Dashboard({ }) {
                 setPosts,
                 page,
                 setPage,
-                setHasMore
+                setHasMore,
             );
         }
     };
@@ -137,8 +137,7 @@ export default function Dashboard({ }) {
                                 toggleDrawer={toggleDrawer}
                             />
 
-                            <div className="w-full bg-green-300">
-                            </div>
+                            <div className="w-full bg-green-300"></div>
                             <div className="h-3/6"></div>
 
                             <div className=" text-center text-sl m-auto ">

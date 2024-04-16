@@ -3,7 +3,14 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import AxiosGet from "./AxiosGet";
 
-export default async function FetchWithPagination (rout, params, setData, page, setPage, setHasMore) {
+export default async function FetchWithPagination(
+    rout,
+    params,
+    setData,
+    page,
+    setPage,
+    setHasMore,
+) {
     try {
         const response = await AxiosGet(rout, params, null, null);
         setData((prevData) => [...prevData, ...response.data]);
@@ -14,4 +21,4 @@ export default async function FetchWithPagination (rout, params, setData, page, 
     } catch (error) {
         console.error(error);
     }
-};
+}

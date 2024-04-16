@@ -14,7 +14,7 @@ export default function Authenticated({ children }) {
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="border-b border-gray-100">
-                <BackgroundImage/>
+                <BackgroundImage />
                 <ToastContainer
                     position="top-right"
                     autoClose={5000}
@@ -70,7 +70,9 @@ export default function Authenticated({ children }) {
 
                                                 <Dropdown.Content>
                                                     <Dropdown.Link
-                                                        href={route("profile.edit")}
+                                                        href={route(
+                                                            "profile.edit",
+                                                        )}
                                                     >
                                                         Profile
                                                     </Dropdown.Link>
@@ -93,7 +95,6 @@ export default function Authenticated({ children }) {
                                         >
                                             Zaloguj
                                         </Link>
-
                                     </>
                                 )}
                             </nav>

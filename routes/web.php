@@ -46,6 +46,4 @@ Route::get('/post/{category}', [PostController::class, 'index'])->name('post.ind
 Route::get('/fetchPosts', [PostController::class, 'fetchPosts'])->name('post.fetchPosts');
 Route::get('/image/fetchImages/{post}', [ImageController::class, 'fetchImages'])->name('image.fetchImages');
 
-
-
 require __DIR__.'/auth.php';

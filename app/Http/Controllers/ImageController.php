@@ -7,9 +7,7 @@ use App\Http\Resources\ImageResource;
 use App\Models\Category;
 use App\Models\Image;
 use App\Models\Post;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class ImageController extends Controller
 {
