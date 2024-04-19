@@ -6,15 +6,27 @@ export default async function AxiosPost(
     rout,
     routData,
     data,
-    returnType = null,
+    setData
 ) {
-    try {
-        let response = await axios.post(route(rout, routData), data);
-        Notify(response.data.message, null, response.status);
+    return await axios.post(route(rout, routData), data)
+        .then((response) => {
+            if (setData) {
+                setData(response.data.data);
+            }
+            Notify(response.data.message, null, response.status);
+            Notify(response.message, null, response.status);
 
-        return response;
-    } catch (error) {
-        Notify(error.response.data.message, "error");
-        console.error("Axios post error: ", error);
-    }
+            return response;
+        })
+        .catch((error) => {
+            if (error.response.data) {
+                Notify("Błąd", "error");
+                console.error(error);
+            } else {
+                Notify("Błąd", "error");
+                console.error("error");
+                console.error(error);
+            }
+        }
+    );
 }

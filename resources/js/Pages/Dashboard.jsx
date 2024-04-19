@@ -33,6 +33,9 @@ export default function Dashboard({}) {
     const user = usePage().props.auth.user;
 
     const fetchPaginatedImage = async () => {
+
+        // let tmp = await AxiosGet("category.index", null, null, null);
+        // console.log(tmp);
         if (setPosts) {
             FetchWithPagination(
                 "post.fetchPosts",
@@ -57,7 +60,7 @@ export default function Dashboard({}) {
     };
 
     useEffect(() => {
-        fetchPaginatedImage();
+        //fetchPaginatedImage();
         AxiosGet("category.index", null, null, setCategories);
     }, []);
 
@@ -66,6 +69,11 @@ export default function Dashboard({}) {
         setPosts([]);
         fetchPaginatedImage();
     }, [selectedCategory]);
+
+    useEffect(() => {
+        console.log(posts);
+
+    }, [posts]);
 
     return (
         <AuthenticatedLayout>

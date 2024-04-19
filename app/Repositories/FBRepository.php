@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Helpers\CacheHelper;
 use App\Models\Category;
 use App\Models\Image;
 use App\Models\Post;

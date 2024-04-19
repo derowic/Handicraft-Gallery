@@ -1,30 +1,28 @@
 import axios from "axios";
 import Notify from "@/Pages/API/Notify";
 
-async function AxiosPut(rout, routeData, data, setErrors) {
-    try {
-        const response = await axios
-            .put(route(rout, routeData), data)
-            .then(function (response) {
-                Notify(response.data.message, null, response.status);
-                return response.data;
-            })
-            .catch(function (error) {
-                Notify(error.response.data.message, "error");
-                console.log(error);
-            })
+async function AxiosPut(rout, routeData, data, setData) {
+    return await axios.put(route(rout, routData), data)
+        .then((response) => {
+            if (setData) {
+                setData(response.data.data);
+            }
+            Notify(response.data.message, null, response.status);
+            Notify(response.message, null, response.status);
 
-            .finally(function () {
-                // always executed
-            });
-        Notify(response.data.message, null, response.status);
-        return response.data;
-    } catch (error) {
-        Notify(error.response?.data?.message, "error");
-        //console.error(error);
-        //throw error;
-        return "t";
-    }
+            return response;
+        })
+        .catch((error) => {
+            if (error.response.data) {
+                Notify("Błąd", "error");
+                console.error(error);
+            } else {
+                Notify("Błąd", "error");
+                console.error("error");
+                console.error(error);
+            }
+        }
+    );
 }
 
 export default AxiosPut;

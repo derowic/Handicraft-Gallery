@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default async function Notify(text, type = "default", code = null) {
     if (type == "default") {
         toast(text, {
-            position: "top-right",
+            position: "top-left",
             autoClose: 5000,
             hideProgressBar: false,
             closeOnClick: true,

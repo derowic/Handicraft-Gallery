@@ -50,6 +50,6 @@ class ImageController extends Controller
     {
         $image->delete();
 
-        return response()->json(['message' => trans('notifications.Image deleted')], 200);
+        return response()->json(200);
     }
 }

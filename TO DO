@@ -3,8 +3,13 @@
 + 3. Napisy w formularzu, że poprzedni post nie został zapisany i trzeba zapisać aby zrobić nowy
 + 4. resource i Request
 + 5. ładowanie zdjęć postów po kliknięci posta
-6. cache do ostatnich 50 zdjęć
++ 6. cache do ostatnich 50 zdjęć
 + 7. ustandaryzwoanie kodu, szczegolnie auth i guest layout
 - 8. zdjęcia do wersji webp, do zrobienia ale na linux
 9. pozycjonowanie strony
-10. walidacja formularza
++ 10. walidacja formularza
++ 11. odświeżanie przy usuwaniu postów
++ 12. obsługa błedów przy błednych danych zdjęć, usuwaniu usinętego postu
++ 13. błedy z konsoli
++ 14. pobieranie kolenych postow nie stykas
++ 15. usuwanie z cache usinietych postów

@@ -7,13 +7,11 @@ import React, {
 } from "react";
 import { Link, Head } from "@inertiajs/react";
 import { ToastContainer, toast } from "react-toastify";
-import AxiosGet from "../API/AxiosGet";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function Category({ category }) {
-    useEffect(() => {
-        console.log(category.name);
-    }, [category]);
+    useEffect(() => {}, [category]);
+
     return (
         <div className="w-full">
             {/* <a

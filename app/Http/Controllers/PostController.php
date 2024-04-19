@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CacheHelper;
 use App\Http\Requests\PostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Category;
@@ -9,6 +10,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Cache;
 
 class PostController extends Controller
 {
@@ -33,7 +35,6 @@ class PostController extends Controller
             $title = '';
         } else {
             $post->load('images');
-            $title = 'Nie zapisano poprzedniego postu, możesz dokończyć jego edycję';
         }
 
         return Inertia::render('Post/Form/FormPost', [
@@ -55,55 +56,67 @@ class PostController extends Controller
 
     public function fetchPosts(Request $request)
     {
-        $perPage = 5;
+        $page = $request->input('page');
+        $posts = null;
+        $hasMorePosts = null;
+        if($request->input('page') == 2)
+        {
+            $posts = CacheHelper::getPosts();
+            $hasMorePosts = true;
 
-        $postsQuery = Post::with(['category:id,name'])->orderBy('created_at', 'desc');
-        $postsQuery->where('category_id', '>', 0);
-        if ($request->input('category')) {
-            $postsQuery->where('category_id', $request->input('category'));
         }
-        $posts = $postsQuery->paginate($perPage);
+
+        if(!$posts)
+        {
+            $postsQuery = Post::with(['category:id,name'])->orderBy('created_at', 'desc');
+            $postsQuery->where('category_id', '>', 0);
+            if ($request->input('category')) {
+                $postsQuery->where('category_id', $request->input('category'));
+            }
+            $posts = $postsQuery
+                ->skip(($page - 1) * $this->perPage)
+                ->take($this->perPage)
+                ->get();
+
+            $hasMorePosts = $posts->count() === $this->perPage;
+        }
 
         return response()->json([
-            'hasMore' => $posts->hasMorePages(),
+            'hasMore' => $hasMorePosts,
             'data' => PostResource::collection($posts),
         ]);
     }
 
     public function store(PostRequest $request)
     {
-        $post = new Post();
-        $post->title = $request->input('title');
-        $post->description = $request->input('description');
-        $post->category_id = $request->input('category');
-        $post->price = $request->input('price');
-        $post->created_at = now();
-        $post->updated_at = now();
-        $post->save();
+        $post = new Post([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'category_id' => $request->input('category'),
+            'price' => $request->input('price'),
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        CacheHelper::refreshCache();
 
         return redirect()->back()->with('toast', 'Added new product');
-        // if ($post->save()) {
-        //     return response()->json(['message' => trans('notifications.Post added, wait in fresh to accept by moderators')], 201);
-        // } else {
-        //     return response()->json(['message' => trans('notifications.Error while adding post')], 500);
-        // }
     }
 
     public function update(Post $post, PostRequest $request)
     {
-        $post->title = $request->input('title');
-        $post->price = $request->input('price');
-        $post->description = $request->input('description');
-        $post->category_id = $request->input('category');
-        $post->updated_at = now();
-        $post->save();
+
+        $post->update([
+            'title' =>  $request->input('title'),
+            'price' => $request->input('price'),
+            'description' => $request->input('description'),
+            'category_id' => $request->input('category'),
+            'updated_at' => now()
+        ]);
+
+        CacheHelper::refreshCache();
 
         return redirect()->back()->with('toast', 'Updated the product');
-        if ($post->save()) {
-            return response()->json(['message' => trans('notifications.Post updated')], 200);
-        } else {
-            return response()->json(['message' => trans('notifications.Error while adding post')], 500);
-        }
     }
 
     public function destroy(Post $post)
@@ -115,9 +128,10 @@ class PostController extends Controller
             }
             $image->delete();
         }
-
         $post->delete();
 
-        return response()->json(['message' => trans('notifications.Post deleted')], 200);
+        CacheHelper::refreshCache();
+
+        return response()->json(500);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CacheHelper;
 use App\Repositories\FBRepository;
 
 class FacebookController extends Controller
@@ -17,6 +18,8 @@ class FacebookController extends Controller
     {
         $this->fbRepository->getFacebookPosts();
         $this->fbRepository->updateFBToken();
+
+        CacheHelper::refreshCache();
 
         return response()->json(['message' => trans('notifications.Posts updated')], 201);
     }

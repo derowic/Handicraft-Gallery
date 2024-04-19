@@ -35,9 +35,7 @@ export default function Post({ post, deletingPost }) {
     };
 
     useEffect(() => {
-        //AxiosGet("image.fetchImages",)
         if (isOpen == true && images.length == 0) {
-            console.log(post);
             AxiosGet("image.fetchImages", { post: post.id }, null, setImages);
         }
     }, [isOpen]);

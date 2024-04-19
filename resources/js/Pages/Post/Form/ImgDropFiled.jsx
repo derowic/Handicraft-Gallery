@@ -56,21 +56,18 @@ export default function ImgDropFiled({
         newPreviews.splice(index, 1);
         setImages(newPreviews);
         setIsRemovingImage(false);
-        // console.log(index);
-        // setPreViewImages(preViewImages.filter(deletedImage => deletedImage.id !== index));
     };
 
     const handleImageUpload = async () => {
         console.error("Error uploading images:");
         const formData = new FormData();
         images.forEach((image) => {
-            formData.append("images[]", image); // Dodaj każde zdjęcie do obiektu FormData
+            formData.append("images[]", image);
         });
 
-        console.log(post);
         try {
             const response = await axios.post(
-                route("image.store", { post: post.id }), // Zmień na odpowiedni endpoint
+                route("image.store", { post: post.id }),
                 formData,
                 {
                     headers: {
@@ -78,7 +75,6 @@ export default function ImgDropFiled({
                     },
                 },
             );
-            console.log(response.data); // Obsłuż odpowiedź z backendu
             Notify(response.data.message, null, response.status);
             setImages([]);
             setPreViewImages([]);
@@ -90,10 +86,7 @@ export default function ImgDropFiled({
         }
     };
 
-    useEffect(() => {
-        console.log(preViewImages);
-        // console.log(images);
-    }, [preViewImages]);
+    useEffect(() => {}, [preViewImages]);
 
     Modal.setAppElement("#root");
 
@@ -143,7 +136,8 @@ export default function ImgDropFiled({
                                 <p>Podgląd zdjęć</p>
                             </div>
                             <div className="w-[50vw]  gap-4 relative z-10 h-[80vh] overflow-y-auto rounded-lg border-2 border-gray-300 m-2">
-                                {preViewImages.map((image, imageIndex) => (
+                                {preViewImages &&
+                                preViewImages.map((image, imageIndex) => (
                                     <div
                                         key={imageIndex}
                                         className="relative p-4 m-auto"

@@ -16,8 +16,8 @@ export default function InfiniteScrollPosts({
     hasMore,
 }) {
     const deletingPost = async (post) => {
-        let tmp = await AxiosDelete("post.destroy", { post: post.id }, null, 1);
-        if (tmp.status == 201) {
+        let tmp = await AxiosDelete("post.destroy", { post: post.id }, null, null);
+        if (tmp.status == 200) {
             setPosts(posts.filter((deletedPost) => deletedPost.id !== post.id));
         }
     };
