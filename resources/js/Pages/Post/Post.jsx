@@ -81,7 +81,7 @@ export default function Post({ post, deletingPost }) {
                     />
                 </div>
                 <div className="lg:flex">
-                    <div className="w-1/6"></div>
+                    <div className="lg:w-1/6"></div>
                     <div className="sm:w-full lg:w-4/6 overflow-y-auto h-[100vh] relative">
                         {images.map((image, imageIndex) => (
                             <Img
@@ -91,9 +91,11 @@ export default function Post({ post, deletingPost }) {
                             />
                         ))}
                     </div>
-                    <div className="w-1/6 flex break-all justify-center items-center flex-col">
+                    <div className="lg:w-1/6 flex break-all justify-center items-center flex-col">
                         <div>{post.title ?? `Produkt ${post.id}`}</div>
-                        <div>Opis: {post.description}</div>
+                        {post.description?.length > 0 &&
+                            <div>Opis: {post.description}</div>
+                        }
                         <div>cena: {post.price ?? "nie podano"} zł</div>
                         <div>ilość zdjęć: {images.length}</div>
                     </div>

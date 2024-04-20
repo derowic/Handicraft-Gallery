@@ -36,31 +36,25 @@ export default function FormPost({ title, categories, postData }) {
         e.preventDefault();
 
         if (postData) {
-            put(route("post.update", { post: postData.id }),
-                {
-                    onSuccess: (response) => {
-                        Inertia.visit(route('dashboard'));
-                    },
-                    onError: (errors) => {
-                        setError(errors);
-                    },
-                    onFinish: (params) => {
-                    },
+            put(route("post.update", { post: postData.id }), {
+                onSuccess: (response) => {
+                    Inertia.visit(route("dashboard"));
                 },
-            );
+                onError: (errors) => {
+                    setError(errors);
+                },
+                onFinish: (params) => {},
+            });
         } else {
-            post(route("post.store"),
-                {
-                    onSuccess: (response) => {
-                        Inertia.visit(route('dashboard'));
-                    },
-                    onError: (errors) => {
-                        setError(errors);
-                    },
-                    onFinish: (params) => {
-                    }
-                }
-            );
+            post(route("post.store"), {
+                onSuccess: (response) => {
+                    Inertia.visit(route("dashboard"));
+                },
+                onError: (errors) => {
+                    setError(errors);
+                },
+                onFinish: (params) => {},
+            });
         }
     };
 
@@ -89,15 +83,19 @@ export default function FormPost({ title, categories, postData }) {
         });
     };
 
-    useEffect(() => {
-    }, [postData, preViewImages]);
+    useEffect(() => {}, [postData, preViewImages]);
 
     return (
         <Authenticated>
             <BackgroundImage />
-            <div className="w-full text-center p-2 bg-white text-red-600 text-3xl font-bold">{title}</div>
+            <div className="w-full text-center p-2 bg-white text-red-600 text-3xl font-bold">
+                {title}
+            </div>
             <div className="flex relative w-full p-2">
-                <form onSubmit={handleSubmit} className="w-2/6 mx-auto bg-white rounded-lg h-1/2 ">
+                <form
+                    onSubmit={handleSubmit}
+                    className="w-2/6 mx-auto bg-white rounded-lg h-1/2 "
+                >
                     <div className="flex flex-col items-center">
                         <div className="w-5/6">
                             <label
@@ -114,7 +112,11 @@ export default function FormPost({ title, categories, postData }) {
                                 onChange={handleChange}
                                 className="w-full rounded-lg p-2"
                             />
-                            {errors.title && <span className="text-red-500">{errors.title}</span>}
+                            {errors.title && (
+                                <span className="text-red-500">
+                                    {errors.title}
+                                </span>
+                            )}
                         </div>
                         <div className="w-5/6">
                             <label
@@ -130,7 +132,11 @@ export default function FormPost({ title, categories, postData }) {
                                 onChange={handleChange}
                                 className="w-full rounded-lg p-2"
                             ></textarea>
-                            {errors.description && <span className="text-red-500">{errors.description}</span>}
+                            {errors.description && (
+                                <span className="text-red-500">
+                                    {errors.description}
+                                </span>
+                            )}
                         </div>
                         <div className="w-5/6">
                             <label
@@ -147,7 +153,11 @@ export default function FormPost({ title, categories, postData }) {
                                 onChange={handleChange}
                                 className="w-full rounded-lg p-2"
                             />
-                            {errors.price && <span className="text-red-500">{errors.price}</span>}
+                            {errors.price && (
+                                <span className="text-red-500">
+                                    {errors.price}
+                                </span>
+                            )}
                         </div>
                         <div className="w-5/6 text-black m-2">
                             <label
@@ -175,7 +185,11 @@ export default function FormPost({ title, categories, postData }) {
                                     </option>
                                 ))}
                             </select>
-                            {errors.category && <span className="text-red-500">{errors.category}</span>}
+                            {errors.category && (
+                                <span className="text-red-500">
+                                    {errors.category}
+                                </span>
+                            )}
                         </div>
                     </div>
                 </form>
@@ -189,7 +203,11 @@ export default function FormPost({ title, categories, postData }) {
                         />
                     </div>
                     <div className="overflow-y-auto h-[85vh] relative">
-                        <div className="text-2xl text-center">{images && images.length == 0 && "Nie załadowano jeszcze żadnych zdjęć"}</div>
+                        <div className="text-2xl text-center">
+                            {images &&
+                                images.length == 0 &&
+                                "Nie załadowano jeszcze żadnych zdjęć"}
+                        </div>
                         {images &&
                             images.map((image, imageIndex) => (
                                 <div className="relative">
@@ -210,8 +228,7 @@ export default function FormPost({ title, categories, postData }) {
                                         />
                                     </div>
                                 </div>
-                            ))
-                        }
+                            ))}
                     </div>
                 </div>
             </div>

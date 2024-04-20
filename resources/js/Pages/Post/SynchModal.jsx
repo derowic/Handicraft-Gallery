@@ -42,14 +42,21 @@ export default function SynchModal({}) {
                 className="rounded-lg fixed inset-0 flex items-center justify-center z-50 "
             >
                 <Dialog.Panel className="bg-white p-4 rounded shadow-md w-1/2">
-                    <Dialog.Title
-                        className={"text-2xl text-blue-400 w-full text-center"}
-                    >
-                        {"Synchronizacja postów z facebook"}
-                    </Dialog.Title>
+                    <div className="flex">
+                        <Dialog.Title
+                            className={"text-2xl text-blue-400 w-full text-center"}
+                        >
+                            {"Synchronizacja postów z facebook"}
+                        </Dialog.Title>
+                        <button
+                            onClick={closeDialog}
+                            className="pl-6 justify-top text-gray-500 hover:text-gray-700 focus:outline-none">
+                                X
+                        </button>
+                    </div>
                     <div className="mt-4 flex justify-end">
                         {isSync
-                            ? "Rozpoczęto synchronizacje danych, może to potrwać kilka minut..., zrób sobie kawe"
+                            ? "Rozpoczęto synchronizacje danych, synchronizacja wykonuje się w tle, możesz zamknąć to okno. Nowe posty będą widocze po odświeżeniu strony"
                             : "Synchronizację zakończono"}
                     </div>
                 </Dialog.Panel>

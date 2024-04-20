@@ -137,28 +137,28 @@ export default function ImgDropFiled({
                             </div>
                             <div className="w-[50vw]  gap-4 relative z-10 h-[80vh] overflow-y-auto rounded-lg border-2 border-gray-300 m-2">
                                 {preViewImages &&
-                                preViewImages.map((image, imageIndex) => (
-                                    <div
-                                        key={imageIndex}
-                                        className="relative p-4 m-auto"
-                                    >
-                                        <img
-                                            src={image}
-                                            alt="Preview"
-                                            className="w-full rounded-lg"
-                                        />
-                                        <div className="absolute top-10 right-10">
-                                            <Button
-                                                text={"Usuń zdjęcie"}
-                                                onClick={() =>
-                                                    removeImage(imageIndex)
-                                                }
-                                                className="bg-red-500 hover:bg-red-400 text-white rounded-lg"
-                                                iconPath={"delete.png"}
+                                    preViewImages.map((image, imageIndex) => (
+                                        <div
+                                            key={imageIndex}
+                                            className="relative p-4 m-auto"
+                                        >
+                                            <img
+                                                src={image}
+                                                alt="Preview"
+                                                className="w-full rounded-lg"
                                             />
+                                            <div className="absolute top-10 right-10">
+                                                <Button
+                                                    text={"Usuń zdjęcie"}
+                                                    onClick={() =>
+                                                        removeImage(imageIndex)
+                                                    }
+                                                    className="bg-red-500 hover:bg-red-400 text-white rounded-lg"
+                                                    iconPath={"delete.png"}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
                             </div>
                         </div>
                     </div>

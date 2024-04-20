@@ -16,7 +16,12 @@ export default function InfiniteScrollPosts({
     hasMore,
 }) {
     const deletingPost = async (post) => {
-        let tmp = await AxiosDelete("post.destroy", { post: post.id }, null, null);
+        let tmp = await AxiosDelete(
+            "post.destroy",
+            { post: post.id },
+            null,
+            null,
+        );
         if (tmp.status == 200) {
             setPosts(posts.filter((deletedPost) => deletedPost.id !== post.id));
         }
@@ -37,7 +42,7 @@ export default function InfiniteScrollPosts({
                     <p className="text-center text-xl py-5">{"Koniec"}</p>
                 }
             >
-                <div className="px-3">
+                <div className="px-1">
                     <div className="gap-0.5 w-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                         {posts.map((post, postIndex) => (
                             <Post

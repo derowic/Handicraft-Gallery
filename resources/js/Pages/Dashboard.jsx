@@ -27,15 +27,10 @@ export default function Dashboard({}) {
     const [posts, setPosts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
-    const [screenWidth, setScreenWidth] = useState(
-        window.navigator.userAgentData?.mobile,
-    );
+    const [isMobile, setIsMobile] = useState();
     const user = usePage().props.auth.user;
 
     const fetchPaginatedImage = async () => {
-
-        // let tmp = await AxiosGet("category.index", null, null, null);
-        // console.log(tmp);
         if (setPosts) {
             FetchWithPagination(
                 "post.fetchPosts",
@@ -59,8 +54,12 @@ export default function Dashboard({}) {
         window.scrollTo(0, 0);
     };
 
+    const isMobileDevice = () => {
+        return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    }
+
     useEffect(() => {
-        //fetchPaginatedImage();
+        setIsMobile(isMobileDevice || window.navigator.userAgentData?.mobile);
         AxiosGet("category.index", null, null, setCategories);
     }, []);
 
@@ -71,13 +70,11 @@ export default function Dashboard({}) {
     }, [selectedCategory]);
 
     useEffect(() => {
-        console.log(posts);
-
     }, [posts]);
 
     return (
         <AuthenticatedLayout>
-            {screenWidth ? (
+            {isMobile ? (
                 <>
                     <BackgroundImage />
                     <div className="w-full bg-[#fff] text-[#333]">
@@ -127,7 +124,7 @@ export default function Dashboard({}) {
                             <InfiniteScrollPosts
                                 posts={posts}
                                 setPosts={setPosts}
-                                fetchPaginatedImage={null}
+                                fetchPaginatedImage={fetchPaginatedImage}
                                 hasMore={hasMore}
                             />
                         </div>

@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
+use Intervention\Image\Facades\Image as ImageFacade;
+use Intervention\Image\ImageServiceProvider as ImageServiceProvider;
 
 return [
 
@@ -169,6 +171,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
+        // ImageServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -184,6 +187,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        // 'Image' => ImageFacade::class,
     ])->toArray(),
 
 ];

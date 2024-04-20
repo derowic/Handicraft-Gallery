@@ -2,7 +2,6 @@
 
 namespace App\Helpers;
 
-use App\Http\Resources\PostResource;
 use App\Models\Post;
 use Illuminate\Support\Facades\Cache;
 
@@ -40,25 +39,24 @@ class CacheHelper
 
     public static function getPosts()
     {
-        if(Cache::has('posts')) {
-            return Cache::get("posts");
-        }
-        else {
-            Cache::forever('posts', Self::fetchPosts());
+        if (Cache::has('posts')) {
+            return Cache::get('posts');
+        } else {
+            Cache::forever('posts', self::fetchPosts());
         }
     }
 
     public static function refreshCache()
     {
-        Self::forget('posts');
-        Cache::forever('posts', Self::fetchPosts());
+        self::forget('posts');
+        Cache::forever('posts', self::fetchPosts());
     }
 
     private static function fetchPosts()
     {
         $postsQuery = Post::with(['category:id,name'])->orderBy('created_at', 'desc');
         $postsQuery->where('category_id', '>', 0);
+
         return $postsQuery->paginate(20);
     }
 }
-

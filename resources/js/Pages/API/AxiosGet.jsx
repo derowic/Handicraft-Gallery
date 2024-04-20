@@ -3,7 +3,8 @@ import axios from "axios";
 import Notify from "./Notify";
 
 export default async function AxiosGet(rout, routData, data, setData) {
-    return await axios.get(route(rout, routData), data)
+    return await axios
+        .get(route(rout, routData), data)
         .then((response) => {
             if (setData) {
                 setData(response.data.data);
@@ -22,6 +23,5 @@ export default async function AxiosGet(rout, routData, data, setData) {
                 console.error("error");
                 console.error(error);
             }
-        }
-    );
+        });
 }

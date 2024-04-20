@@ -2,7 +2,8 @@ import axios from "axios";
 import Notify from "@/Pages/API/Notify";
 
 async function AxiosPut(rout, routeData, data, setData) {
-    return await axios.put(route(rout, routData), data)
+    return await axios
+        .put(route(rout, routData), data)
         .then((response) => {
             if (setData) {
                 setData(response.data.data);
@@ -21,8 +22,7 @@ async function AxiosPut(rout, routeData, data, setData) {
                 console.error("error");
                 console.error(error);
             }
-        }
-    );
+        });
 }
 
 export default AxiosPut;

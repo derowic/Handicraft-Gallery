@@ -51,7 +51,7 @@ export default function Categories({
                                 className={
                                     "flex justify-center items-center" +
                                     (selectedCategory == category.id
-                                        ? "px-2 py-1 bg-green-400 rounded-lg text-white"
+                                        ? "px-2 py-1 bg-gray-700 rounded-lg text-white"
                                         : "")
                                 }
                                 style={{ width: "100%" }}

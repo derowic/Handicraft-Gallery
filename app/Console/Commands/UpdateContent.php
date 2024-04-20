@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Repositories\FBRepository;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class UpdateContent extends Command
 {
@@ -36,6 +37,6 @@ class UpdateContent extends Command
     {
         $this->fbRepository->getFacebookPosts();
         $this->fbRepository->updateFBToken();
-        \Log::info('Task executed successfully!');
+        Log::info('Task executed successfully!');
     }
 }

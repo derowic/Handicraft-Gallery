@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Helpers\CacheHelper;
 use App\Models\Category;
 use App\Models\Image;
 use App\Models\Post;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class FBRepository
 {
@@ -69,8 +69,10 @@ class FBRepository
         }
     }
 
-    public function getFacebookPosts($limit = 25, $offset = 0)
+    public function getFacebookPosts()
     {
+        try {
+            DB::beginTransaction();
         dump('rozpoczęto aktualizację');
         $this->categories = Category::pluck('id', 'key_word_name');
 
@@ -88,61 +90,65 @@ class FBRepository
                 'Connection' => 'keep-alive',
             ],
         ]);
+        $this->clearDB();
 
-        try {
-            do {
-                $response = $client->get($endpoint);
-                $body = $response->getBody();
-                $posts = json_decode($body, true);
-                foreach ($posts['data'] as $post) {
-                    DB::transaction(function () use ($post, $client) {
-                        if (isset($post['attachments']) && isset($post['attachments']['data'])) {
-                            if (! Post::where('fbId', $post['id'])->exists()) {
-                                foreach ($post['attachments']['data'] as $attachment) {
-                                    if (isset($attachment['subattachments'])) {
-                                        $newPost = new Post();
-                                        $newPost->fbId = $post['id'];
-                                        $newPost->category_id = $this->findCategory($post);
-                                        $newPost->price = $this->findPrice($post);
-                                        $newPost->created_at = $post['created_time'];
-                                        $newPost->updated_at = now();
-                                        $newPost->save();
-                                        $counter = 0;
-                                        foreach ($attachment['subattachments']['data'] as $subAttachment) {
-                                            $imageUrl = $subAttachment['media']['image']['src'];
-                                            $imageContent = $client->get($imageUrl)->getBody()->getContents();
-                                            $fileName = strval($newPost->id).strval($counter).'.jpg';
-                                            file_put_contents(public_path('images/'.$fileName), $imageContent);
-                                            $image = new Image();
-                                            $image->post_id = $newPost->id;
-                                            $image->path_to_image = $fileName;
-                                            $image->created_at = $post['created_time'];
-                                            $image->updated_at = now();
-                                            $image->save();
-                                            $counter++;
-                                        }
-                                    } elseif (isset($attachment['type']) && $attachment['type'] === 'link') {
-                                        $linkUrl = $attachment['url'];
-                                    }
+        do {
+            $response = $client->get($endpoint);
+            $body = $response->getBody();
+            $posts = json_decode($body, true);
+            foreach ($posts['data'] as $post) {
+                if (isset($post['attachments']) && isset($post['attachments']['data'])) {
+                    if (! Post::where('fbId', $post['id'])->exists()) {
+                        foreach ($post['attachments']['data'] as $attachment) {
+                            if (isset($attachment['subattachments'])) {
+                                $newPost = new Post();
+                                $newPost->fbId = $post['id'];
+                                $newPost->category_id = $this->findCategory($post);
+                                $newPost->price = $this->findPrice($post);
+                                $newPost->created_at = $post['created_time'];
+                                $newPost->updated_at = now();
+                                $newPost->save();
+                                $counter = 0;
+                                foreach ($attachment['subattachments']['data'] as $subAttachment) {
+                                    $imageUrl = $subAttachment['media']['image']['src'];
+                                    $imageContent = file_get_contents($imageUrl);
+                                    $originalImage = imagecreatefromstring($imageContent);
+                                    $webpImagePath = public_path('images/' . (strval($newPost->id).strval($counter)) . '.webp');
+                                    imagewebp($originalImage, $webpImagePath,10);
+
+                                    $imageModel = new Image();
+                                    $imageModel->post_id = $newPost->id;
+                                    $imageModel->path_to_image = (strval($newPost->id).strval($counter)). '.webp';
+                                    $imageModel->created_at = $post['created_time'];
+                                    $imageModel->updated_at = now();
+                                    $imageModel->save();
+                                    $counter++;
                                 }
+                            } elseif (isset($attachment['type']) && $attachment['type'] === 'link') {
+                                $linkUrl = $attachment['url'];
                             }
                         }
-                    });
+                    }
                 }
+            }
 
-                $nextPageUrl = (isset($posts['paging']['next']) && ! empty($posts['paging']['next'])) ? $posts['paging']['next'] : null;
+            $nextPageUrl = (isset($posts['paging']['next']) && ! empty($posts['paging']['next'])) ? $posts['paging']['next'] : null;
 
-                if ($nextPageUrl) {
-                    $endpoint = $nextPageUrl;
-                } else {
-                    dump('załadowano wszystko1');
-                    break;
-                }
+            if ($nextPageUrl) {
+                $endpoint = $nextPageUrl;
+            } else {
+                dump('załadowano wszystko1');
+                break;
+            }
 
             } while ($nextPageUrl);
+
             dump('załadowano wszystko2');
+            DB::commit();
 
         } catch (\Exception $e) {
+            DB::rollBack();
+            Log::info('Error while fetching new post from FB ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

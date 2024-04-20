@@ -3,15 +3,14 @@ import axios from "axios";
 import Notify from "@/Pages/API/Notify";
 
 export default async function AxiosDelete(rout, routData, data, setData) {
-    return await axios.delete(route(rout, routData), data)
+    return await axios
+        .delete(route(rout, routData), data)
         .then((response) => {
             if (setData) {
                 setData(response.data.data);
             }
             Notify(response.data.message, null, response.status);
             Notify(response.message, null, response.status);
-
-            console.log(response);
 
             return response;
         })
@@ -24,6 +23,5 @@ export default async function AxiosDelete(rout, routData, data, setData) {
                 console.error("error");
                 console.error(error);
             }
-        }
-    );
+        });
 }

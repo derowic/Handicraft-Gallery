@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('image/delete/{image}', [ImageController::class, 'destroy'])->name('image.destroy');
 
     Route::get('/clearDB', [FacebookController::class, 'clear'])->name('facebook.clearDB');
-    Route::get('/refreshPosts', [FacebookController::class, 'refresh'])->name('facebook.refreshPosts');
+    Route::post('/refreshPosts', [FacebookController::class, 'refresh'])->name('facebook.refreshPosts');
 });
 
 Route::get('/category', [CategoryController::class, 'index'])->name('category.index');

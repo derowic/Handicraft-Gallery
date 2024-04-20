@@ -9,8 +9,6 @@ use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
-use Illuminate\Support\Facades\Cache;
 
 class PostController extends Controller
 {
@@ -59,15 +57,13 @@ class PostController extends Controller
         $page = $request->input('page');
         $posts = null;
         $hasMorePosts = null;
-        if($request->input('page') == 2)
-        {
+        if ($request->input('page') == 2) {
             $posts = CacheHelper::getPosts();
             $hasMorePosts = true;
 
         }
 
-        if(!$posts)
-        {
+        if (! $posts) {
             $postsQuery = Post::with(['category:id,name'])->orderBy('created_at', 'desc');
             $postsQuery->where('category_id', '>', 0);
             if ($request->input('category')) {
@@ -95,7 +91,7 @@ class PostController extends Controller
             'category_id' => $request->input('category'),
             'price' => $request->input('price'),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         CacheHelper::refreshCache();
@@ -107,11 +103,11 @@ class PostController extends Controller
     {
 
         $post->update([
-            'title' =>  $request->input('title'),
+            'title' => $request->input('title'),
             'price' => $request->input('price'),
             'description' => $request->input('description'),
             'category_id' => $request->input('category'),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         CacheHelper::refreshCache();

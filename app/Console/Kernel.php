@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command(UpdateContent::class)->saturdays()->at('00:00');
+        $schedule->command(UpdateContent::class)->saturdays()->at('23:00');
+            //->everyMinute();
     }
 
     /**
