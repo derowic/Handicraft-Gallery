@@ -20,9 +20,13 @@ export default function SynchModal({}) {
     const [isOpen, setIsOpen] = useState(false);
     const [isSync, setIsSync] = useState(true);
 
-    const openDialog = () => {
+    const openDialog = async () => {
         setIsOpen(true);
-        AxiosPost("facebook.refreshPosts");
+        let tmp = await AxiosPost("facebook.refreshPosts");
+        if(tmp.status == 201)
+        {
+            setIsSync(false);
+        }
     };
     const closeDialog = () => {
         setIsOpen(false);
@@ -54,7 +58,7 @@ export default function SynchModal({}) {
                                 X
                         </button>
                     </div>
-                    <div className="mt-4 flex justify-end">
+                    <div className="mt-4 flex justify-center">
                         {isSync
                             ? "Rozpoczęto synchronizacje danych, synchronizacja wykonuje się w tle, możesz zamknąć to okno. Nowe posty będą widocze po odświeżeniu strony"
                             : "Synchronizację zakończono"}

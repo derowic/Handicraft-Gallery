@@ -42,7 +42,9 @@ class CacheHelper
         if (Cache::has('posts')) {
             return Cache::get('posts');
         } else {
-            Cache::forever('posts', self::fetchPosts());
+            $posts = self::fetchPosts();
+            Cache::forever('posts', $posts);
+            return $posts;
         }
     }
 
@@ -54,8 +56,12 @@ class CacheHelper
 
     private static function fetchPosts()
     {
-        $postsQuery = Post::with(['category:id,name'])->orderBy('created_at', 'desc');
-        $postsQuery->where('category_id', '>', 0);
+        $postsQuery = Post::with(['category:id,name'])
+        ->orderBy('created_at', 'desc')
+        ->where(function ($query) {
+            $query->where('category_id', '!=', 0)
+                  ->orWhereNull('category_id');
+        });
 
         return $postsQuery->paginate(20);
     }

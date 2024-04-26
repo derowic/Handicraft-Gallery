@@ -57,17 +57,19 @@ class PostController extends Controller
         $page = $request->input('page');
         $posts = null;
         $hasMorePosts = null;
-        if ($request->input('page') == 2) {
+        if ($request->input('page') == 1 && $request->input('category') == null) {
             $posts = CacheHelper::getPosts();
             $hasMorePosts = true;
-
         }
 
         if (! $posts) {
             $postsQuery = Post::with(['category:id,name'])->orderBy('created_at', 'desc');
-            $postsQuery->where('category_id', '>', 0);
             if ($request->input('category')) {
                 $postsQuery->where('category_id', $request->input('category'));
+            }
+            else
+            {
+                $postsQuery->where('category_id', '>', 0)->orWhereNull('category_id');
             }
             $posts = $postsQuery
                 ->skip(($page - 1) * $this->perPage)

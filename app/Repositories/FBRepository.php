@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Helpers\CacheHelper;
 use App\Models\Category;
 use App\Models\Image;
 use App\Models\Post;
@@ -71,9 +72,6 @@ class FBRepository
 
     public function getFacebookPosts()
     {
-        try {
-            DB::beginTransaction();
-        dump('rozpoczęto aktualizację');
         $this->categories = Category::pluck('id', 'key_word_name');
 
         set_time_limit(0);
@@ -90,7 +88,6 @@ class FBRepository
                 'Connection' => 'keep-alive',
             ],
         ]);
-        $this->clearDB();
 
         do {
             $response = $client->get($endpoint);
@@ -99,34 +96,40 @@ class FBRepository
             foreach ($posts['data'] as $post) {
                 if (isset($post['attachments']) && isset($post['attachments']['data'])) {
                     if (! Post::where('fbId', $post['id'])->exists()) {
-                        foreach ($post['attachments']['data'] as $attachment) {
-                            if (isset($attachment['subattachments'])) {
-                                $newPost = new Post();
-                                $newPost->fbId = $post['id'];
-                                $newPost->category_id = $this->findCategory($post);
-                                $newPost->price = $this->findPrice($post);
-                                $newPost->created_at = $post['created_time'];
-                                $newPost->updated_at = now();
-                                $newPost->save();
-                                $counter = 0;
-                                foreach ($attachment['subattachments']['data'] as $subAttachment) {
-                                    $imageUrl = $subAttachment['media']['image']['src'];
-                                    $imageContent = file_get_contents($imageUrl);
-                                    $originalImage = imagecreatefromstring($imageContent);
-                                    $webpImagePath = public_path('images/' . (strval($newPost->id).strval($counter)) . '.webp');
-                                    imagewebp($originalImage, $webpImagePath,10);
+                        try {
+                            DB::beginTransaction();
+                            foreach ($post['attachments']['data'] as $attachment) {
+                                if (isset($attachment['subattachments'])) {
+                                    $newPost = new Post();
+                                    $newPost->fbId = $post['id'];
+                                    $newPost->category_id = $this->findCategory($post);
+                                    $newPost->price = $this->findPrice($post);
+                                    $newPost->created_at = $post['created_time'];
+                                    $newPost->updated_at = now();
+                                    $newPost->save();
+                                    $counter = 0;
+                                    foreach ($attachment['subattachments']['data'] as $subAttachment) {
+                                        $imageUrl = $subAttachment['media']['image']['src'];
+                                        $imageContent = file_get_contents($imageUrl);
+                                        $originalImage = imagecreatefromstring($imageContent);
+                                        $webpImagePath = public_path('images/' . (strval($newPost->id).strval($counter)) . '.webp');
+                                        imagewebp($originalImage, $webpImagePath,10);
 
-                                    $imageModel = new Image();
-                                    $imageModel->post_id = $newPost->id;
-                                    $imageModel->path_to_image = (strval($newPost->id).strval($counter)). '.webp';
-                                    $imageModel->created_at = $post['created_time'];
-                                    $imageModel->updated_at = now();
-                                    $imageModel->save();
-                                    $counter++;
+                                        $imageModel = new Image();
+                                        $imageModel->post_id = $newPost->id;
+                                        $imageModel->path_to_image = (strval($newPost->id).strval($counter)). '.webp';
+                                        $imageModel->created_at = $post['created_time'];
+                                        $imageModel->updated_at = now();
+                                        $imageModel->save();
+                                        $counter++;
+                                    }
                                 }
-                            } elseif (isset($attachment['type']) && $attachment['type'] === 'link') {
-                                $linkUrl = $attachment['url'];
                             }
+                            DB::commit();
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            Log::info('Error while fetching new post from FB ' . $e->getMessage());
+                            return response()->json(['error' => $e->getMessage()], 500);
                         }
                     }
                 }
@@ -137,20 +140,12 @@ class FBRepository
             if ($nextPageUrl) {
                 $endpoint = $nextPageUrl;
             } else {
-                dump('załadowano wszystko1');
                 break;
             }
 
-            } while ($nextPageUrl);
-
-            dump('załadowano wszystko2');
-            DB::commit();
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::info('Error while fetching new post from FB ' . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        } while ($nextPageUrl);
+        CacheHelper::refreshCache();
+        Log::info('Content updated!');
     }
 
     public function clearDB()

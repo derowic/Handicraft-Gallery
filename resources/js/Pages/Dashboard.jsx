@@ -79,13 +79,7 @@ export default function Dashboard({}) {
                     <BackgroundImage />
                     <div className="w-full bg-[#fff] text-[#333]">
                         <div className="flex">
-                            <Link
-                                href={route("welcome")}
-                                className="px-5 p-4 w-full tracking-widest text-xl "
-                            >
-                                Kolorowe nie pachnące
-                            </Link>
-                            <IconButton onClick={toggleDrawer}>
+                            <IconButton onClick={toggleDrawer} className="w-full justify-end">
                                 <MenuIcon />
                             </IconButton>
                         </div>

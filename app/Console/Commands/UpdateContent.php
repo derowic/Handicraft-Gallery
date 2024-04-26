@@ -37,6 +37,6 @@ class UpdateContent extends Command
     {
         $this->fbRepository->getFacebookPosts();
         $this->fbRepository->updateFBToken();
-        Log::info('Task executed successfully!');
+        Log::info('Content updated!');
     }
 }
