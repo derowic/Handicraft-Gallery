@@ -1,4 +1,4 @@
-It's little website gallery of handicraft that fetch data from fb account one a week
+It's little website gallery of handicraft that fetch data from fb account once a week
 You can find it at: https://koloroweniepachnace.pl/
 
 Commands to install local:
